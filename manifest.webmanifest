@@ -1,0 +1,105 @@
+{
+  "name": "考研政治 · 经纬图谱",
+  "short_name": "政治经纬图谱",
+  "description": "考研政治史纲×毛概双线融合时空经纬图谱 (1840—2026)",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0f1d",
+  "theme_color": "#6366f1",
+  "lang": "zh-CN",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": [
+    "education",
+    "productivity",
+    "utilities"
+  ],
+  "shortcuts": [
+    {
+      "name": "第一篇章 · 旧民主主义革命",
+      "short_name": "旧民主革命",
+      "description": "1840—1919 早期探索与觉醒",
+      "url": "./index.html#old-demo",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "第三篇章 · 土地革命战争",
+      "short_name": "土地革命",
+      "description": "1927—1937 毛泽东思想初步形成",
+      "url": "./index.html#land",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "第四篇章 · 抗日战争时期",
+      "short_name": "抗日战争",
+      "description": "1937—1945 毛泽东思想成熟与确立",
+      "url": "./index.html#anti-japan",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "第六篇章 · 社会主义革命与探索",
+      "short_name": "社会主义探索",
+      "description": "1949—1978 三大改造与八大开端",
+      "url": "./index.html#socialist",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "第七篇章 · 改革开放与新时代",
+      "short_name": "改革开放",
+      "description": "1978至今 中特理论与新的飞跃",
+      "url": "./index.html#reform",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
