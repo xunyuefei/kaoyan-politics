@@ -2865,95 +2865,530 @@ body {
    PRINT STYLES (PDF导出)
    ============================================================ */
 @media print {
-  /* Reset backgrounds for print */
+  @page {
+    size: A4 portrait;
+    margin: 10mm 8mm 10mm 8mm;
+  }
+
+  /* Enforce exact background and color reproduction */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
   }
 
-  body {
-    background: #fff !important;
-    color: #1a1a1a !important;
-    font-size: 11pt;
+  :root {
+    --text-primary: #111827 !important;
+    --text-secondary: #374151 !important;
+    --text-muted: #6b7280 !important;
+    --border-subtle: #e5e7eb !important;
+    --border-medium: #d1d5db !important;
+    --bg-deep: #ffffff !important;
+    --bg-surface: #ffffff !important;
+    --bg-card: #f9fafb !important;
   }
 
-  .bg-weave, .bg-glow, .bg-glow--history, .bg-glow--theory,
-  .toolbar, .minimap, .search-bar, .controls,
-  .quiz-overlay, .kmap-overlay, .stats-overlay {
+  html, body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 9.5pt !important;
+    line-height: 1.45 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  /* Hide all interactive, navigational, background & UI elements */
+  .bg-weave,
+  .bg-glow,
+  .bg-glow--history,
+  .bg-glow--theory,
+  .toolbar,
+  .sticky-dock,
+  .chapter-nav-wrapper,
+  .chapter-subnav,
+  .chapter-footer,
+  .minimap,
+  .search-bar,
+  .controls,
+  .stats,
+  .legend,
+  .quiz-overlay,
+  .kmap-overlay,
+  .stats-overlay,
+  .works-overlay,
+  .pwa-overlay,
+  .pdf-overlay,
+  .footer {
     display: none !important;
   }
 
   .app {
-    max-width: 100%;
-    padding: 0;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
+  /* Scope-based display controls for Print */
+  body[data-print-scope="all"] .node {
+    display: grid !important;
+  }
+  body[data-print-scope="all"] .period-banner {
+    display: block !important;
+  }
+
+  body[data-print-scope="current"] .node.node--hidden,
+  body[data-print-scope="current"] .period-banner.period--hidden,
+  body[data-print-scope="current"] .chapter-footer {
+    display: none !important;
+  }
+
+  body[data-print-scope="radar"] .hero,
+  body[data-print-scope="radar"] .timeline,
+  body[data-print-scope="radar"] .period-banner,
+  body[data-print-scope="radar"] .chapter-footer {
+    display: none !important;
+  }
+
+  body:not([data-print-scope]) .node.node--hidden,
+  body:not([data-print-scope]) .period-banner.period--hidden {
+    display: none !important;
+  }
+
+  /* Printable Header */
   .hero {
-    padding: 20pt 0 10pt;
-    page-break-after: avoid;
+    padding: 10pt 0 6pt !important;
+    margin-bottom: 10pt !important;
+    border-bottom: 2px solid #111827 !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  .hero__badge {
+    border: 1px solid #9ca3af !important;
+    background: #f3f4f6 !important;
+    color: #374151 !important;
+    font-size: 8pt !important;
+    padding: 2pt 8pt !important;
+    margin-bottom: 4pt !important;
   }
 
   .hero__title {
-    -webkit-text-fill-color: #1a1a1a !important;
-    color: #1a1a1a !important;
+    -webkit-text-fill-color: #111827 !important;
+    color: #111827 !important;
     background: none !important;
     animation: none !important;
-    font-size: 22pt;
+    font-size: 18pt !important;
+    font-weight: 900 !important;
+    letter-spacing: 2pt !important;
+    margin-bottom: 4pt !important;
   }
 
   .hero__subtitle {
-    color: #555 !important;
+    color: #4b5563 !important;
+    font-size: 9pt !important;
+    line-height: 1.4 !important;
+    margin: 0 auto !important;
+  }
+
+  /* Period Banners: Clean Page Breaks between chapters */
+  .period-banner {
+    margin: 16pt 0 10pt !important;
+    padding: 0 !important;
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+
+  /* First chapter banner doesn't break page right after header */
+  #period-old-demo {
+    break-before: avoid !important;
+    page-break-before: avoid !important;
+  }
+
+  .period-banner__pill {
+    background: #f3f4f6 !important;
+    border: 1.5pt solid #111827 !important;
+    color: #111827 !important;
+    font-size: 10.5pt !important;
+    font-weight: 800 !important;
+    padding: 4pt 10pt !important;
+    border-radius: 4pt !important;
+    display: inline-flex !important;
+  }
+
+  .period-banner__title {
+    color: #111827 !important;
+  }
+
+  .period-banner__dates {
+    color: #4b5563 !important;
+    border-left: 1px solid #d1d5db !important;
+    margin-left: 8pt !important;
+    padding-left: 8pt !important;
+  }
+
+  /* Timeline & Nodes Layout for Print (Single column A4 flow) */
+  .timeline {
+    padding: 0 !important;
+    position: relative !important;
+  }
+
+  .timeline__axis {
+    left: 21pt !important;
+    background: #d1d5db !important;
+    width: 1.5pt !important;
   }
 
   .node {
+    display: grid !important;
+    grid-template-columns: 42pt 1fr !important;
+    grid-template-areas:
+      "dot history"
+      "dot theory"
+      ".   trap" !important;
+    gap: 6pt 10pt !important;
+    margin-bottom: 14pt !important;
     opacity: 1 !important;
     transform: none !important;
-    page-break-inside: avoid;
-    margin-bottom: 16pt;
+    break-inside: auto !important;
+    page-break-inside: auto !important;
   }
 
+  .node__dot-wrap {
+    grid-area: dot !important;
+    width: 42pt !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    padding-top: 4pt !important;
+  }
+
+  .node__dot {
+    width: 9pt !important;
+    height: 9pt !important;
+    background: #111827 !important;
+    border: 1.5pt solid #fff !important;
+    box-shadow: 0 0 0 1.5pt #111827 !important;
+    position: relative !important;
+    margin-top: 14pt !important;
+  }
+
+  .node__year {
+    position: absolute !important;
+    top: -14pt !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    font-size: 7.5pt !important;
+    font-weight: 800 !important;
+    color: #111827 !important;
+    background: #f3f4f6 !important;
+    border: 1pt solid #9ca3af !important;
+    padding: 1pt 3pt !important;
+    border-radius: 2pt !important;
+    white-space: nowrap !important;
+  }
+
+  /* Cards in Print */
   .card {
-    border: 1px solid #ddd !important;
-    background: #f9f9f9 !important;
-    box-shadow: none !important;
+    border-radius: 4pt !important;
+    padding: 7pt 9pt !important;
+    margin-bottom: 4pt !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    width: 100% !important;
   }
 
-  .card--history { background: #fffbeb !important; }
-  .card--theory  { background: #eef2ff !important; }
+  .card--history {
+    grid-area: history !important;
+    background: #fffdf5 !important;
+    border: 1pt solid #fde68a !important;
+    border-left: 3.5pt solid #d97706 !important;
+  }
 
+  .card--theory {
+    grid-area: theory !important;
+    background: #f8faff !important;
+    border: 1pt solid #c7d2fe !important;
+    border-left: 3.5pt solid #4f46e5 !important;
+  }
+
+  .card--history::after,
+  .card--theory::after {
+    display: none !important;
+  }
+
+  .card__label {
+    font-size: 7.5pt !important;
+    padding: 1pt 5pt !important;
+    border-radius: 2pt !important;
+    margin-bottom: 3pt !important;
+    display: inline-block !important;
+    font-weight: 700 !important;
+  }
+
+  .card__label--history {
+    background: #fef3c7 !important;
+    color: #92400e !important;
+    border: 0.5pt solid #f59e0b !important;
+  }
+
+  .card__label--theory {
+    background: #e0e7ff !important;
+    color: #3730a3 !important;
+    border: 0.5pt solid #6366f1 !important;
+  }
+
+  .card__title {
+    font-size: 10pt !important;
+    font-weight: 800 !important;
+    color: #111827 !important;
+    margin-bottom: 3pt !important;
+    line-height: 1.3 !important;
+  }
+
+  .card__body {
+    font-size: 8.5pt !important;
+    color: #1f2937 !important;
+    line-height: 1.45 !important;
+  }
+
+  .card__body ul {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .card__body li {
+    padding-left: 12pt !important;
+    margin-bottom: 3pt !important;
+    color: #1f2937 !important;
+  }
+
+  .card__body li::before {
+    font-size: 7.5pt !important;
+    left: 2pt !important;
+  }
+
+  /* Keywords in Print: Clear Highlighting */
+  .kw {
+    padding: 0 2pt !important;
+    border-radius: 2pt !important;
+    font-weight: 700 !important;
+  }
+
+  .kw--history {
+    background: #fef3c7 !important;
+    color: #78350f !important;
+    border-bottom: 1.5pt solid #f59e0b !important;
+  }
+
+  .kw--theory {
+    background: #e0e7ff !important;
+    color: #312e81 !important;
+    border-bottom: 1.5pt solid #6366f1 !important;
+  }
+
+  .kw--important {
+    background: #fee2e2 !important;
+    color: #991b1b !important;
+    border-bottom: 1.5pt solid #ef4444 !important;
+  }
+
+  /* Trap Box in Print */
   .trap {
-    background: #fef2f2 !important;
-    border: 1px solid #fca5a5 !important;
-    page-break-inside: avoid;
+    grid-area: trap !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 4pt 0 !important;
+    background: #fff8f8 !important;
+    border: 1pt solid #fecaca !important;
+    border-left: 3.5pt solid #dc2626 !important;
+    border-radius: 4pt !important;
+    padding: 6pt 8pt !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .trap__header {
+    margin-bottom: 3pt !important;
+  }
+
+  .trap__badge {
+    background: #fee2e2 !important;
+    color: #991b1b !important;
+    font-size: 7.5pt !important;
+    padding: 1pt 5pt !important;
+    border-radius: 2pt !important;
+    font-weight: 700 !important;
+  }
+
+  .trap__toggle {
+    display: none !important;
+  }
+
+  .trap__summary {
+    font-size: 8.5pt !important;
+    color: #7f1d1d !important;
+    font-weight: 700 !important;
   }
 
   .trap__detail {
     max-height: none !important;
     overflow: visible !important;
+    display: block !important;
+    padding-top: 4pt !important;
   }
 
-  .timeline__axis {
-    background: #ccc !important;
+  /* Compare Tables in Print */
+  .compare-table {
+    display: table !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    border-collapse: collapse !important;
+    margin-top: 4pt !important;
+    font-size: 7.5pt !important;
+    border: 1pt solid #d1d5db !important;
   }
 
+  .compare-table th {
+    background: #f3f4f6 !important;
+    color: #111827 !important;
+    font-weight: 700 !important;
+    border: 0.5pt solid #d1d5db !important;
+    padding: 3pt 5pt !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    font-size: 7.5pt !important;
+  }
+
+  .compare-table td {
+    border: 0.5pt solid #e5e7eb !important;
+    color: #1f2937 !important;
+    padding: 3pt 5pt !important;
+    line-height: 1.35 !important;
+    font-size: 7.5pt !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+
+  .compare-table tr:nth-child(even) td {
+    background: #fafafa !important;
+  }
+
+  .diff-mark {
+    background: #fef08a !important;
+    color: #854d0e !important;
+    font-weight: 700 !important;
+    padding: 0 2pt !important;
+    border-radius: 2pt !important;
+  }
+
+  /* Radar & Rules in Print */
+  .radar-section,
+  .rules-section,
   .connections-section {
-    page-break-before: always;
+    break-before: page !important;
+    page-break-before: always !important;
+    border: 1pt solid #d1d5db !important;
+    background: #ffffff !important;
+    padding: 10pt !important;
+    border-radius: 4pt !important;
+    margin-top: 14pt !important;
   }
 
-  .connection-thread {
-    border: 1px solid #ddd !important;
+  .radar-title,
+  .rules-title,
+  .connections-title {
+    color: #111827 !important;
+    font-size: 13pt !important;
+    font-weight: 800 !important;
+    border-bottom: 1.5pt solid #111827 !important;
+    padding-bottom: 4pt !important;
+    margin-bottom: 6pt !important;
+  }
+
+  .radar-subtitle,
+  .rules-subtitle,
+  .connections-subtitle {
+    color: #4b5563 !important;
+    font-size: 8pt !important;
+    margin-bottom: 6pt !important;
+  }
+
+  .radar-tabs {
+    display: none !important;
+  }
+
+  /* Print all radar panels */
+  .radar-panel {
+    display: block !important;
+    margin-bottom: 12pt !important;
+  }
+
+  .radar-table-wrap {
+    overflow: visible !important;
+    border: 1pt solid #d1d5db !important;
+  }
+
+  .radar-table {
+    display: table !important;
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 7.2pt !important;
+  }
+
+  .radar-table th {
+    background: #f3f4f6 !important;
+    color: #111827 !important;
+    border: 0.5pt solid #d1d5db !important;
+    padding: 3pt 4pt !important;
+    font-size: 7.2pt !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+
+  .radar-table td {
+    border: 0.5pt solid #e5e7eb !important;
+    color: #1f2937 !important;
+    padding: 3pt 4pt !important;
+    font-size: 7.2pt !important;
+    line-height: 1.3 !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+
+  .rules-grid {
+    display: block !important;
+  }
+
+  .rule-card {
+    border: 1pt solid #e5e7eb !important;
     background: #fafafa !important;
+    padding: 5pt 7pt !important;
+    margin-bottom: 5pt !important;
+    break-inside: avoid !important;
   }
 
-  .stat {
-    border: 1px solid #ddd !important;
-    background: #fafafa !important;
+  .rule-num {
+    background: #e0e7ff !important;
+    color: #3730a3 !important;
+    font-size: 7.2pt !important;
+    padding: 1pt 4pt !important;
+    font-weight: 700 !important;
   }
 
-  .legend { margin-bottom: 10pt; }
-  .footer { padding: 10pt 0; }
+  .rule-title {
+    color: #111827 !important;
+    font-size: 8.5pt !important;
+    font-weight: 700 !important;
+  }
 
-  a { text-decoration: none; color: inherit; }
+  .rule-body {
+    color: #374151 !important;
+    font-size: 7.5pt !important;
+    line-height: 1.35 !important;
+  }
 }
 
 /* ============================================================
@@ -3151,6 +3586,129 @@ body {
   gap: 12px;
   margin-top: 8px;
 }
+
+/* ============================================================
+   PDF EXPORT MODAL OVERLAY STYLES
+   ============================================================ */
+.pdf-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 8, 16, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  padding: 20px;
+}
+.pdf-overlay--active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.pdf-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 26px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+[data-theme="light"] .pdf-modal {
+  background: #ffffff;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+}
+.pdf-modal__header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.pdf-modal__title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+  margin: 0;
+}
+.pdf-modal__subtitle {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+.pdf-config-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pdf-config-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.pdf-radio-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pdf-radio-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+[data-theme="light"] .pdf-radio-item {
+  background: rgba(15, 23, 42, 0.02);
+}
+.pdf-radio-item:hover {
+  border-color: var(--accent-theory);
+  background: rgba(99, 102, 241, 0.06);
+}
+.pdf-radio-item input[type="radio"] {
+  margin-top: 3px;
+  accent-color: var(--accent-theory);
+  width: 16px;
+  height: 16px;
+}
+.pdf-radio-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  line-height: 1.45;
+}
+.pdf-tips {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.pdf-tips strong {
+  color: #fbbf24;
+}
+.pdf-modal__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 4px;
+}
 </style>
 </head>
 <body>
@@ -3204,6 +3762,7 @@ body {
     </div>
     <div class="sticky-dock__divider"></div>
     <div class="sticky-dock__extra">
+      <button class="sticky-dock__btn" id="dockPdfBtn" onclick="exportPDF()" title="导出高清PDF背诵手册">📄 导出PDF</button>
       <button class="sticky-dock__btn sticky-dock__btn--pwa" id="dockPwaBtn" onclick="handlePWAInstall()" title="安装为桌面独立窗口应用">💻 桌面版</button>
       <button class="sticky-dock__btn" onclick="scrollToId('radarSection')" title="跳转到专题雷达">🎯 雷达</button>
       <button class="sticky-dock__btn" onclick="scrollToId('rulesSection')" title="跳转到4K避坑法则">⚡ 4K避坑</button>
@@ -3279,7 +3838,8 @@ body {
       <!-- 快速直达辅助条 -->
       <div class="chapter-subnav">
         <span class="chapter-subnav__hint">⚡ 快速直达：</span>
-        <button class="chapter-subnav__btn chapter-subnav__btn--pwa" id="subnavPwaBtn" onclick="handlePWAInstall()">💻 安装桌面独立窗口 (PWA)</button>
+        <button class="chapter-subnav__btn" id="subnavPdfBtn" onclick="exportPDF()" title="导出高清PDF背诵手册">📄 导出PDF手册</button>
+    <button class="chapter-subnav__btn chapter-subnav__btn--pwa" id="subnavPwaBtn" onclick="handlePWAInstall()">💻 安装桌面独立窗口 (PWA)</button>
         <button class="chapter-subnav__btn" onclick="scrollToId('radarSection')">🎯 跨期三维雷达 (土地/毛思/统战)</button>
         <button class="chapter-subnav__btn" onclick="scrollToId('rulesSection')">⚡ 史纲毛概 4K 避坑法则</button>
         <button class="chapter-subnav__btn" onclick="scrollToId('connectionsSection')">🔗 四大核心理论脉络</button>
@@ -6538,6 +7098,70 @@ body {
   </div>
 </div>
 
+<!-- ========== PDF EXPORT MODAL OVERLAY ========== -->
+<div class="pdf-overlay" id="pdfOverlay" onclick="if(event.target===this)closePDFModal()">
+  <div class="pdf-modal">
+    <div class="pdf-modal__header">
+      <span style="font-size:1.6rem;">🖨️</span>
+      <div>
+        <h2 class="pdf-modal__title">考研政治 · 经纬图谱 导出与打印中心</h2>
+        <div class="pdf-modal__subtitle">已针对 A4 纸张排版进行深度黑白/护眼墨水优化，智能分页防截断</div>
+      </div>
+    </div>
+
+    <!-- 导出范围配置 -->
+    <div class="pdf-config-group">
+      <div class="pdf-config-title">📋 打印与导出范围：</div>
+      <div class="pdf-radio-list">
+        <label class="pdf-radio-item">
+          <input type="radio" name="pdfScope" value="all" checked>
+          <div>
+            <strong>🌟 全本 36 考点完整大图谱 (推荐背诵)</strong>
+            <div class="pdf-radio-desc">包含 1840—2026 七大时期全部历史线、理论线与 36 组易错对比表，按章节自动分页。</div>
+          </div>
+        </label>
+        <label class="pdf-radio-item">
+          <input type="radio" name="pdfScope" value="current">
+          <div>
+            <strong>📌 仅导出当前选中的篇章</strong>
+            <div class="pdf-radio-desc">仅打印当前正在专注学习的单章内容，轻巧便携，单张 A4 纸快速出纸。</div>
+          </div>
+        </label>
+        <label class="pdf-radio-item">
+          <input type="radio" name="pdfScope" value="radar">
+          <div>
+            <strong>🎯 仅导出专题雷达与 4K 避坑法则</strong>
+            <div class="pdf-radio-desc">专攻多选题纵向对比：土地政策沿革、毛思著作全景、统战政权演化与 10 大避坑秒杀题眼。</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- 打印提示说明 -->
+    <div class="pdf-tips">
+      <div style="font-weight:700;margin-bottom:6pt;color:#f59e0b;">💡 打印与保存关键设置指南：</div>
+      <div style="margin-bottom:6pt;">
+        <strong>🖥️ 电脑端（Chrome / Edge / 360）：</strong><br>
+        ① 目标打印机请选择<strong>「另存为 PDF」</strong>；<br>
+        ② 展开「更多设置」，务必勾选<strong>「背景图形」</strong>（保留考点高光与题眼标签底色）；<br>
+        ③ 边距建议选择<strong>「默认」</strong>或<strong>「无」</strong>，纸张选择<strong>「A4」</strong>。
+      </div>
+      <div>
+        <strong>📱 手机端保存为 PDF 文件：</strong><br>
+        • <strong>苹果 iPhone / iPad (Safari)</strong>：点击导出后，在弹出的打印预览页上，<strong>双指往外张开（放大手势）</strong>，预览即刻变成完整 PDF！点击右上角「分享」→「存储到“文件”」即可；<br>
+        • <strong>微信内打开</strong>：微信自带浏览器禁止了打印窗口，请点击右上角 <strong>···</strong> 选择<strong>「在浏览器中打开」</strong>后即可正常保存！
+      </div>
+    </div>
+
+    <div class="pdf-modal__actions">
+      <button class="quiz-card__btn quiz-card__btn--primary" onclick="startGeneratePDF()">
+        🖨️ 立即生成并调起打印 (保存为 PDF)
+      </button>
+      <button class="quiz-card__btn" onclick="closePDFModal()">✕ 取消</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ============================================================
 // RADAR TAB SWITCH
@@ -7686,21 +8310,64 @@ function renderStatsPanel() {
 }
 
 // ============================================================
-// PDF EXPORT (导出PDF)
+// PDF EXPORT (高清完整打印与另存为PDF系统)
 // ============================================================
 function exportPDF() {
-  // Expand all trap details for printing
+  openPDFModal();
+}
+
+function openPDFModal() {
+  document.getElementById('pdfOverlay').classList.add('pdf-overlay--active');
+}
+
+function closePDFModal() {
+  document.getElementById('pdfOverlay').classList.remove('pdf-overlay--active');
+}
+
+function startGeneratePDF() {
+  const scope = document.querySelector('input[name="pdfScope"]:checked')?.value || 'all';
+  closePDFModal();
+
+  // Save previous user navigation state
+  const prevChapter = currentChapter;
+  document.body.setAttribute('data-print-scope', scope);
+
+  // 1. Expand all trap tables so complete comparison details are printed
   document.querySelectorAll('.trap').forEach(t => t.classList.add('trap--expanded'));
 
-  // Small delay then trigger print
+  // 2. Configure visibility based on selected scope
+  if (scope === 'all') {
+    // Show all nodes and periods across all 7 chapters
+    document.querySelectorAll('.node').forEach(n => n.classList.remove('node--hidden'));
+    document.querySelectorAll('.period-banner').forEach(p => p.classList.remove('period--hidden'));
+    document.querySelectorAll('.radar-section, .rules-section, .connections-section').forEach(s => s.style.display = '');
+  } else if (scope === 'current') {
+    // Keep currently viewed chapter active, hide radar/rules
+    document.querySelectorAll('.radar-section, .rules-section, .connections-section').forEach(s => s.style.display = 'none');
+  } else if (scope === 'radar') {
+    // Hide timeline nodes, only print radar & 4K rules
+    document.querySelectorAll('.radar-section, .rules-section').forEach(s => s.style.display = '');
+    const conn = document.querySelector('.connections-section');
+    if (conn) conn.style.display = 'none';
+  }
+
+  // 3. Restore state cleanly after print preview closes
+  const restoreHandler = () => {
+    window.removeEventListener('afterprint', restoreHandler);
+    document.body.removeAttribute('data-print-scope');
+    // Restore collapsed traps
+    document.querySelectorAll('.trap').forEach(t => t.classList.remove('trap--expanded'));
+    // Restore sections
+    document.querySelectorAll('.radar-section, .rules-section, .connections-section').forEach(s => s.style.display = '');
+    // Restore user's previous chapter view
+    selectChapter(prevChapter);
+  };
+  window.addEventListener('afterprint', restoreHandler, { once: true });
+
+  // 4. Trigger print
   setTimeout(() => {
     window.print();
-
-    // Collapse traps back after print dialog
-    setTimeout(() => {
-      document.querySelectorAll('.trap').forEach(t => t.classList.remove('trap--expanded'));
-    }, 1000);
-  }, 300);
+  }, 200);
 }
 
 // ============================================================
